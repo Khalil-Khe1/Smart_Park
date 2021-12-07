@@ -27,6 +27,7 @@ SOURCES += \
     QRcode.cpp \
     client.cpp \
     connection.cpp \
+    jeux.cpp \
     main.cpp \
     mainwindow.cpp \
     qcustomplot.cpp \
@@ -36,12 +37,12 @@ HEADERS += \
     QRcode.h \
     client.h \
     connection.h \
+    jeux.h \
     mainwindow.h \
     qcustomplot.h \
     smtp.h
 
 FORMS += \
-    integ.ui \
     mainwindow.ui
 
 # Default rules for deployment.

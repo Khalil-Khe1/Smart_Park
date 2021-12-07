@@ -38,6 +38,15 @@
 #include <QFile>
 #include<QTextStream>
 
+#include "jeux.h"
+#include <string>
+#include <ctime>
+#include <qpixmap.h>
+#include <QGraphicsEllipseItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -77,22 +86,40 @@ void MainWindow::on_login_clicked()
     ui->ln_recherche_nom->setValidator(valiNom);
     ui->ln_chercher_prenom->setValidator(valiNom);
 
+    //Init Khalil
+    ui->tableViewk->setModel(Jtmp.Afficher());
+    ui->tableView2k->setModel(Jtmp.AfficherNom());
+    ui->tableView3k->setModel(Jtmp.AfficherNom());
+    QPixmap Map ("C:/Users/ASUS/Desktop/QT_Khalil/Atelier_Connexion/Images/Map.PNG");
+    ui->image->setPixmap(Map);
+
     //Init Nour
 
 
-        if ( username == "test" && password =="test" )
+        if ( username != "" && password != "" )
         {
-           QMessageBox::information(this,"Login","Username and Password is correct ");
+            if((username == "khalil")&&(password == "khalil")){
+                QMessageBox::information(this,"Login","Username and Password are correct ");
+                ui->stackedWidget->setCurrentIndex(2);
+            }
+            else if((username == "jawher")&&(password == "jawher")){
+                QMessageBox::information(this,"Login","Username and Password are correct ");
+                ui->stackedWidget->setCurrentIndex(1);
+            }
+            else if((username == "nour")&&(password == "nour")){
 
-            //this->hide();
-            ui->stackedWidget->setCurrentIndex(1);
+            }
+            else if((username == "mariem")&&(password == "mariem")){
 
-        }
-        else
-        {
-           QMessageBox::warning(this,"Login","Username and Password is not correct ");
+            }
+            else if((username == "yahya")&&(password == "yahya")){
 
+            }
+            else
+            {
+               QMessageBox::warning(this,"Login","Username and Password is not correct ");
 
+            }
         }
 }
 
@@ -498,4 +525,209 @@ void MainWindow::on_tabWidget_2_currentChanged(int index)
                       legendFont.setPointSize(5);//888//
                       ui->plot->legend->setFont(legendFont);
                       ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+}
+
+//Gestion Jeux - Khalil
+
+void MainWindow::on_butAjouter_clicked()
+{
+    /*std::time_t t = std::time(nullptr);
+        std::tm *const t_info = std::localtime(&t);
+        QString year = (QString) 1900 + t_info->tm_year;
+        QStringRef year2(&year, 2, 2);*/
+        QString id = Jtmp.ConvTracker() + "JX21";
+        //QString id= ui->lineID->text();
+        QString etat = ui->BoxEtat->currentText();
+        QString type = ui->BoxType->currentText();
+        int ticket = ui->linePrix->text().toInt();
+        int um = ui->lineUsage->text().toInt();
+        int x = ui->lineCoordX->text().toInt();
+        int y = ui->lineCoordY->text().toInt();
+        QString nom = ui->lineNom->text();
+        QString img = ui->lineIMG->text();
+
+        JEUX J(id, etat, type, ticket, um, 0, x, y, nom, img);
+
+        bool test = J.Ajouter();
+        if(test)
+            {
+                QMessageBox::information(nullptr, QObject::tr("database is open"),
+                            QObject::tr("Ajout avec succés.\nClick Cancel to exit."), QMessageBox::Ok);
+
+        }
+            else
+               { QMessageBox::critical(nullptr, QObject::tr("database is not open"),
+                            QObject::tr("Ajout échoué.\nClick Cancel to exit."), QMessageBox::Ok);
+        }
+        ui->tableViewk->setModel(Jtmp.Afficher());
+}
+
+void MainWindow::on_butModifier_clicked()
+{
+    QString id_mod=ui->tableViewk->model()->data(ui->tableViewk->model()->index(ui->tableViewk->currentIndex().row(),0)).toString();
+        QString etat = ui->BoxEtat->currentText();
+        QString type = ui->BoxType->currentText();
+        int ticket = ui->linePrix->text().toInt();
+        int um = ui->lineUsage->text().toInt();
+        int x = ui->lineCoordX->text().toInt();
+        int y = ui->lineCoordY->text().toInt();
+        QString nom = ui->lineNom->text();
+        QString img = ui->lineIMG->text();
+
+        JEUX J(id_mod, etat, type, ticket, um, 0, x, y, nom, img);
+
+        bool test = J.Modifier(id_mod);
+
+        if(test)
+            {
+                QMessageBox::information(nullptr, QObject::tr("database is open"),
+                            QObject::tr("Modification avec succés.\n"
+                                        "Click Cancel to exit."), QMessageBox::Ok);
+
+        }
+            else
+               { QMessageBox::critical(nullptr, QObject::tr("database is not open"),
+                            QObject::tr("Modification échoué.\n"
+                                        "Click Cancel to exit."), QMessageBox::Ok);
+        }
+        ui->tableViewk->setModel(Jtmp.Afficher());
+}
+
+void MainWindow::on_butSupprimer_clicked()
+{
+    QString id_del=ui->tableViewk->model()->data(ui->tableViewk->model()->index(ui->tableViewk->currentIndex().row(),0)).toString();
+
+        bool supp = Jtmp.Supprimer(id_del);
+
+        if(supp)
+            {
+                QMessageBox::information(nullptr, QObject::tr("database is open"),
+                            QObject::tr("Suppression avec succés.\n"
+                                        "Click Cancel to exit."), QMessageBox::Ok);
+
+        }
+            else
+               { QMessageBox::critical(nullptr, QObject::tr("database is not open"),
+                            QObject::tr("Suppression échoué.\n"
+                                        "Click Cancel to exit."), QMessageBox::Ok);
+        }
+        ui->tableViewk->setModel(Jtmp.Afficher());
+}
+
+void MainWindow::on_Search_clicked()
+{
+    if((ui->comboSearchk->currentText() == "")||(ui->lineRechercher->text() == "")){
+            QMessageBox::critical(nullptr, QObject::tr("database is not open"),
+                                    QObject::tr("Veuillez selectez une paramètre.\n"), QMessageBox::Ok);
+        }
+        else {
+            ui->tableViewk->setModel(Jtmp.Rechercher(ui->lineRechercher->text(), ui->comboSearchk->currentIndex()));
+        }
+}
+
+void MainWindow::on_butTrier_clicked()
+{
+    ui->tableViewk->setModel(Jtmp.Tri(ui->comboTrik->currentIndex(), ui->comboOrdrek->currentIndex()));
+}
+
+void MainWindow::on_tableView3k_clicked(const QModelIndex &index)
+{
+    QString tab[8] = {"NOM", "ID", "PRIX", "TYPE", "ETAT", "USAGE_TOT", "USAGE_MAINTENANCE", "IMAGE"};
+        QString fields[8] = {"labelNom", "labelID", "labelPrix", "labelType", "labelEtat", "labelUT", "labelUM"};
+        QString indexNom = ui->tableView3k->model()->data(ui->tableView3k->model()->index(ui->tableView3k->currentIndex().row(),0)).toString();
+        QSqlQuery query;
+        bool test = false;
+        query.prepare("SELECT * FROM JEUX");
+        query.exec();
+        while(!test){
+            query.next();
+            if(query.value(7).toString() == indexNom){
+                test = true;
+            }
+        }
+
+        ui->labelNom->setText(query.value(7).toString());
+        ui->labelID->setText(query.value(0).toString());
+        ui->labelPrix->setText(query.value(2).toString());
+        ui->labelType->setText(query.value(8).toString());
+        ui->labelEtat->setText(query.value(1).toString());
+        ui->labelUM->setText(query.value(4).toString());
+        ui->labelUT->setText(query.value(3).toString());
+        QPixmap Map (query.value(9).toString());
+
+        ui->imgJeux->setPixmap(Map);
+        ui->imgJeux->setScaledContents( true );
+        ui->imgJeux->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
+}
+
+void MainWindow::on_butUsage_clicked()
+{
+    QString tab[8] = {"NOM", "ID", "PRIX", "TYPE", "ETAT", "USAGE_TOT", "USAGE_MAINTENANCE", "IMAGE"};
+        QString fields[8] = {"labelNom", "labelID", "labelPrix", "labelType", "labelEtat", "labelUT", "labelUM"};
+        QString indexNom = ui->tableView3k->model()->data(ui->tableView3k->model()->index(ui->tableView3k->currentIndex().row(),0)).toString();
+
+        QSqlQuery query;
+        bool test = false;
+        query.prepare("SELECT * FROM JEUX");
+        query.exec();
+        while(!test){
+            query.next();
+            if(query.value(7).toString() == indexNom){
+                test = true;
+            }
+        }
+
+        int UM = query.value(4).toInt();
+        int UT = query.value(3).toInt();
+
+        int use = ui->spinUse->value();
+        if(Jtmp.Jouer(indexNom, UM, UT, use)){
+                QMessageBox::information(nullptr, QObject::tr("database is open"),
+                            QObject::tr("Modification avec succés.\n"
+                                        "Click Cancel to exit."), QMessageBox::Ok);
+
+        }
+            else
+               { QMessageBox::critical(nullptr, QObject::tr("database is not open"),
+                            QObject::tr("Modification échoué.\n"
+                                        "Click Cancel to exit."), QMessageBox::Ok);
+        }
+}
+
+void MainWindow::on_pushMaintenir_clicked()
+{
+    QString indexNom = ui->tableView3k->model()->data(ui->tableView3k->model()->index(ui->tableView3k->currentIndex().row(),0)).toString();
+        if(Jtmp.Maintenir(indexNom)){
+            QMessageBox::information(nullptr, QObject::tr("database is open"),
+                        QObject::tr("Modification avec succés.\n"
+                                    "Click Cancel to exit."), QMessageBox::Ok);
+        }
+        else
+           { QMessageBox::critical(nullptr, QObject::tr("database is not open"),
+                        QObject::tr("Modification échoué.\n"
+                                    "Click Cancel to exit."), QMessageBox::Ok);
+    }
+}
+
+void MainWindow::on_tableView2k_clicked(const QModelIndex &index)
+{
+    QString indexNom = ui->tableView2k->model()->data(ui->tableView2k->model()->index(ui->tableView2k->currentIndex().row(),0)).toString();
+        QSqlQuery query;
+        bool test = false;
+        query.prepare("SELECT * FROM JEUX");
+        query.exec();
+        while(!test){
+            query.next();
+            if(query.value(7).toString() == indexNom){
+                test = true;
+            }
+        }
+
+        int x = query.value(5).toInt();
+        int y = query.value(6).toInt();
+         QPixmap pin("C:/Users/ASUS/Desktop/QT_Khalil/Atelier_Connexion/Images/Pin.PNG");
+         ui->labelPin->setPixmap(pin);
+         ui->labelPin->setScaledContents( true );
+         ui->labelPin->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
+         ui->labelPin->setGeometry(x, y, 50, 50);
 }

@@ -79,6 +79,14 @@
 #include"smtpYahya.h"
 #include"qcustomplot.h"
 
+//Mariem
+#include"staff.h"
+#include<QMessageBox>
+#include<QSqlTableModel>
+#include<QTableView>
+ #include <QItemSelectionModel>
+#include<QListWidgetItem>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -128,6 +136,9 @@ void MainWindow::on_login_clicked()
     //Init Yahya
     ui->menus->setModel((tmpmenu.afficher()));
     ui->prix->setValidator(new QIntValidator(0,9999999,this));
+
+    //Init Mariem
+    ui->tableMariem->setModel(Etmp.afficher());
 
     //Init Nour
 
@@ -1025,4 +1036,235 @@ void MainWindow::on_pdfYahya_clicked()
     printer.setPageMargins(QMarginsF(15, 15, 15, 15));
 
     delete document;
+}
+
+//Gestion Staff - Mariem
+void MainWindow::on_ajoutM_clicked()
+{
+    //recuperation des informtions
+    int id=ui->idM->text().toInt();
+    //
+    QString nom=ui->nomM->text();
+    QString prenom=ui->prenomM->text();
+    QString fonction=ui->comboFonction->currentText();
+    QDate datedenaissance=ui->dateM->date();
+    staff S(id,nom,prenom,fonction,datedenaissance);
+
+    bool test1=S.ajouter();
+    //id=ui->tableView->selectionBehavior();
+    // bool test2=S.supprimer(id);
+    // bool test2=S.supprimer(ui->tableView->selectionBehavior());
+    if (test1) //si requete executée ==>QMessageBox::information
+    {
+        ui->tableMariem->setModel(S.afficher());
+        QMessageBox::information(nullptr, QObject::tr("ajout"),
+                                 QObject::tr("ajout avec succes .\n"
+                                             "Click Cancel to exit."), QMessageBox::Cancel);
+
+    }
+    else
+        QMessageBox::critical(nullptr, QObject::tr("ajout"),
+                              QObject::tr("insert failed.\n"
+                                          "Click Cancel to exit."), QMessageBox::Cancel);
+}
+
+void MainWindow::on_supprimerM_clicked()
+{
+    //int id =ui->lineEdit_2->text().toInt ;
+    int id=ui->idM->text().toInt();
+    bool test =Etmp.supprimer(id);
+    if (test)
+    {    ui->tableMariem->setModel(Etmp.afficher());
+        QMessageBox::information(nullptr, QObject::tr("supprimer"),
+                                 QObject::tr("suppression avec succes .\n"
+                                             "Click Cancel to exit."), QMessageBox::Cancel);
+
+    }
+    else
+        QMessageBox::critical(nullptr, QObject::tr("supprimer"),
+                              QObject::tr("delete failed.\n"
+                                          "Click Cancel to exit."), QMessageBox::Cancel);
+}
+
+void MainWindow::on_modifierM_clicked()
+{
+    staff S ;
+    int id=ui->idM->text().toInt();
+    QString nom=ui->nomM->text();
+    QString prenom=ui->prenomM->text();
+    QString fonction=ui->comboFonction->currentText();
+    QDate date_naissance=ui->dateM->date();
+    staff S1(id,nom,prenom,fonction,date_naissance);
+    //bool test= S.modifier(id,nom,prenom,fonction,date_naissance);
+    bool test;
+    test= S1.modifier( id , nom, prenom, fonction, date_naissance);
+    if (test)
+        //[☺]
+    {
+        ui->tableMariem->setModel(S1.afficher());
+        QMessageBox::information(nullptr, QObject::tr("MODIFIER"),
+                                 QObject::tr("MODIFICATION avec succes .\n"
+                                             "Click Cancel to exit."), QMessageBox::Cancel);
+
+    }
+    else
+        QMessageBox::critical(nullptr, QObject::tr("MODIFIER"),
+                              QObject::tr("UPDATE failed.\n"
+                                          "Click Cancel to exit."), QMessageBox::Cancel);
+}
+
+void MainWindow::on_tableMariem_activated(const QModelIndex &index)
+{
+    //prendre la valeur de l'indexe et la renvoie en une valeur
+    QString val=ui->tableMariem->model()->data(index).toString();
+    //int val1=ui->tableView->model()->data(index).toInt();
+    QSqlQuery qry ;
+
+
+    //qry.prepare("SELECT * from staff where nom='"+val+"'or nom ='"+val+"' or prenom ='"+val+"' or fonction ='"+val+"' or date_naissance ='"+val+"' ");
+    qry.prepare("SELECT nom, prenom , id , fonction , date_naissance FROM staff");
+    if (qry.exec())
+    {
+
+
+        QMessageBox::information(nullptr, QObject::tr("select"),
+                                 QObject::tr("selection avec succes .\n"
+                                             "Click Cancel to exit."), QMessageBox::Cancel);
+    }
+    else
+    {
+        QMessageBox::critical(nullptr, QObject::tr("error"),
+                              QObject::tr("select failed.\n"
+                                          "Click Cancel to exit."), QMessageBox::Cancel);
+    }
+}
+
+
+void MainWindow::on_rechercherM_clicked()
+{
+    if(ui->checkBox_id_2->isChecked()){
+        int id=ui->rechIDM->text().toInt();
+        QSqlQueryModel* test=Etmp.rechercher_id(id);
+        QMessageBox msgBox;
+        if(test){
+            msgBox.setText("recherche avec succes");
+            ui->tableMariem->setModel(Etmp.rechercher_id(id));
+        }
+        else
+            msgBox.setText(("client introuvable"));
+
+        msgBox.exec();
+    }
+    else if(ui->checkBox_nom_2->isChecked())
+    {
+        QString nom=ui->rechercheNomM->text();
+        QSqlQueryModel* test2=Etmp.rechercher_nom(nom);
+        QMessageBox msgBox;
+        if(test2){
+            msgBox.setText("recherche avec succes");
+            ui->tableMariem->setModel(Etmp.rechercher_nom(nom));
+        }
+        else
+            msgBox.setText(("client introuvable"));
+
+        msgBox.exec();
+    }
+    else if(ui->checkBox_prenom_2->isChecked())
+    {
+        QString prenom=ui->rechPrenomM->text();
+        QSqlQueryModel* test2=Etmp.rechercher_prenom(prenom);
+        QMessageBox msgBox;
+        if(test2){
+            msgBox.setText("recherche avec succes");
+            ui->tableMariem->setModel(Etmp.rechercher_prenom(prenom));
+        }
+        else
+            msgBox.setText(("client introuvable"));
+
+        msgBox.exec();
+    }
+    else if((ui->checkBox_prenom_2->isChecked())&&(ui->checkBox_nom_2->isChecked()))
+    {
+        QString nom=ui->rechercheNomM->text();
+        QString prenom=ui->rechPrenomM->text();
+        QSqlQueryModel* test2=Etmp.rechercher_nomprenom(nom, prenom);
+        QMessageBox msgBox;
+        if(test2){
+            msgBox.setText("recherche avec succes");
+            ui->tableMariem->setModel(Etmp.rechercher_nomprenom(nom, prenom));
+        }
+        else
+            msgBox.setText(("client introuvable"));
+
+        msgBox.exec();
+    }
+    else if((ui->checkBox_id_2->isChecked())&&(ui->checkBox_nom_2->isChecked()))
+    {
+        QString nom=ui->rechercheNomM->text();
+        int id=ui->rechIDM->text().toInt();
+        QSqlQueryModel* test2=Etmp.rechercher_nomid(nom, id);
+        QMessageBox msgBox;
+        if(test2){
+            msgBox.setText("recherche avec succes");
+            ui->tableMariem->setModel(Etmp.rechercher_nomid(nom, id));
+        }
+        else
+            msgBox.setText(("client introuvable"));
+
+        msgBox.exec();
+    }
+    else if((ui->checkBox_id_2->isChecked())&&(ui->checkBox_prenom_2->isChecked()))
+    {
+        QString prenom=ui->rechPrenomM->text();
+        int id=ui->rechIDM->text().toInt();
+        QSqlQueryModel* test2=Etmp.rechercher_prenomid(prenom, id);
+        QMessageBox msgBox;
+        if(test2){
+            msgBox.setText("recherche avec succes");
+            ui->tableMariem->setModel(Etmp.rechercher_prenomid(prenom, id));
+        }
+        else
+            msgBox.setText(("client introuvable"));
+
+        msgBox.exec();
+    }
+    else if((ui->checkBox_id_2->isChecked())&&(ui->checkBox_prenom_2->isChecked())&&(ui->checkBox_nom_2->isChecked()))
+    {
+        QString nom=ui->rechercheNomM->text();
+        QString prenom=ui->rechPrenomM->text();
+        int id=ui->rechIDM->text().toInt();
+        QSqlQueryModel* test2=Etmp.rechercher_prenom_id_nom(prenom, id,nom);
+        QMessageBox msgBox;
+        if(test2){
+            msgBox.setText("recherche avec succes");
+            ui->tableMariem->setModel(Etmp.rechercher_prenom_id_nom(prenom, id,nom));
+        }
+        else
+            msgBox.setText(("staff introuvable"));
+
+        msgBox.exec();
+    }
+}
+
+void MainWindow::on_triM_clicked()
+{
+    QSqlQueryModel* test=Etmp.triparAge();
+    QMessageBox msgBox;
+    if(test){
+        msgBox.setText("tri avec succes");
+        ui->tableMariem->setModel(Etmp.triparAge());
+    }
+    else
+        msgBox.setText(("echec"));
+
+    msgBox.exec();
+}
+
+void MainWindow::on_employe_currentChanged(int index)
+{
+    QTextCharFormat f=ui->calendarWidget->weekdayTextFormat(Qt::Saturday);
+
+    Etmp.calendrier(f,ui->calendarWidget);
+
+    Etmp.statistiques(ui->widget_2);
 }

@@ -3,6 +3,7 @@
 #include "integ.h"
 #include "jeux.h"
 #include "menu.h"
+#include "staff.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -70,11 +71,26 @@ private slots:
 
     void on_pdfYahya_clicked();
 
+    void on_ajoutM_clicked();
+
+    void on_supprimerM_clicked();
+
+    void on_modifierM_clicked();
+
+    void on_tableMariem_activated(const QModelIndex &index);
+
+    void on_rechercherM_clicked();
+
+    void on_triM_clicked();
+
+    void on_employe_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     //integ integ1;
     Client C;
     JEUX Jtmp;
     menu tmpmenu;
+    staff Etmp;
 };
 #endif // MAINWINDOW_H

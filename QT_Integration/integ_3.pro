@@ -1,6 +1,10 @@
 QT += network
 QT       += core gui sql printsupport multimedia
 QT += widgets multimedia
+
+#QT       += core gui sql multimedia multimediawidgets printsupport charts serialport
+#QT += core gui charts
+
 TARGET = QTcpSocket
 CONFIG   += console
 CONFIG   -= app_bundle
@@ -32,8 +36,10 @@ SOURCES += \
     mainwindow.cpp \
     menu.cpp \
     qcustomplot.cpp \
+    serverworker.cpp \
     smtp.cpp \
-    smtpYahya.cpp
+    smtpYahya.cpp \
+    staff.cpp
 
 HEADERS += \
     QRcode.h \
@@ -43,8 +49,10 @@ HEADERS += \
     mainwindow.h \
     menu.h \
     qcustomplot.h \
+    serverworker.h \
     smtp.h \
-    smtpYahya.h
+    smtpYahya.h \
+    staff.h
 
 FORMS += \
     mainwindow.ui

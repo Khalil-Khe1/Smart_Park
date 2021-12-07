@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 #include "integ.h"
 #include "jeux.h"
+#include "menu.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -55,10 +56,25 @@ private slots:
 
     void on_tableView2k_clicked(const QModelIndex &index);
 
+    void on_pb_enregistrer_clicked();
+
+    void on_modifYahya_clicked();
+
+    void on_supprimerYahya_clicked();
+
+    void on_triYahya_clicked();
+
+    void on_rechercheYahya_clicked();
+
+    void on_tabWidget_currentChanged(int index);
+
+    void on_pdfYahya_clicked();
+
 private:
     Ui::MainWindow *ui;
     //integ integ1;
     Client C;
     JEUX Jtmp;
+    menu tmpmenu;
 };
 #endif // MAINWINDOW_H

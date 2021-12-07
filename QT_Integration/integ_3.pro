@@ -30,8 +30,10 @@ SOURCES += \
     jeux.cpp \
     main.cpp \
     mainwindow.cpp \
+    menu.cpp \
     qcustomplot.cpp \
-    smtp.cpp
+    smtp.cpp \
+    smtpYahya.cpp
 
 HEADERS += \
     QRcode.h \
@@ -39,8 +41,10 @@ HEADERS += \
     connection.h \
     jeux.h \
     mainwindow.h \
+    menu.h \
     qcustomplot.h \
-    smtp.h
+    smtp.h \
+    smtpYahya.h
 
 FORMS += \
     mainwindow.ui

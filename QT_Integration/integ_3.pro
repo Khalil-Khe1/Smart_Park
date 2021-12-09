@@ -35,6 +35,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     menu.cpp \
+    place.cpp \
+    popup.cpp \
     qcustomplot.cpp \
     serverworker.cpp \
     smtp.cpp \
@@ -48,6 +50,8 @@ HEADERS += \
     jeux.h \
     mainwindow.h \
     menu.h \
+    place.h \
+    popup.h \
     qcustomplot.h \
     serverworker.h \
     smtp.h \
@@ -55,7 +59,8 @@ HEADERS += \
     staff.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    popup.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

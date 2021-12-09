@@ -4,6 +4,12 @@
 #include "jeux.h"
 #include "menu.h"
 #include "staff.h"
+#include "place.h"
+#include <QMainWindow>
+#include <QSqlTableModel>
+#include <QMediaPlayer>
+#include <QUrl>
+#include <popup.h>
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -85,6 +91,24 @@ private slots:
 
     void on_employe_currentChanged(int index);
 
+    void on_valider_3_clicked();
+
+    void on_pushButton_sup_2_clicked();
+
+    void on_pushButton_modifier_3_clicked();
+
+    void on_pushButton_palce_tri_2_clicked();
+
+    void on_tabWidget_4_currentChanged(int index);
+
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_pdf_2_clicked();
+
+    void on_pushButton_update_2_clicked();
+
+    void on_pushButton_place_rechercher_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     //integ integ1;
@@ -92,5 +116,8 @@ private:
     JEUX Jtmp;
     menu tmpmenu;
     staff Etmp;
+    place ptmp;
+    QMediaPlayer *click;
+    Popup *popup;
 };
 #endif // MAINWINDOW_H

@@ -6,13 +6,13 @@
 
 
 QT += network
-QT       += core gui sql printsupport multimedia
+QT       += core gui sql printsupport multimedia serialport
 QT += widgets multimedia
 TARGET = QTcpSocket
 CONFIG   += console
 CONFIG   -= app_bundle
 
-TEMPLATE = app
+
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -35,6 +35,7 @@ CONFIG += c++11
 
 SOURCES += \
     QRcode.cpp \
+    arduino.cpp \
     client.cpp \
         main.cpp \
         mainwindow.cpp \
@@ -44,6 +45,7 @@ SOURCES += \
 
 HEADERS += \
     QRcode.hhp \
+    arduino.h \
     client.h \
         mainwindow.h \
     connection.h \

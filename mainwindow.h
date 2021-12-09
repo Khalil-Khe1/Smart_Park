@@ -5,7 +5,7 @@
 #include "client.h"
 #include "smtp.h"
 #include <QtWidgets/QMessageBox>
-#include "popup.h"
+#include "arduino.h"
 namespace Ui {
 class MainWindow;
 }
@@ -38,13 +38,21 @@ private slots:
     void on_tabWidget_currentChanged(int index);
 
     void on_pb_supp2_clicked();
+    void update_label();
+
+
+
+
+
+    void on_on_clicked();
 
 
 
 private:
     Ui::MainWindow *ui;
     Client C;
-    PopUp *popUp;
+    QByteArray data; // variable contenant les données reçues
+        Arduino A; // objet temporaire
 };
 
 #endif // MAINWINDOW_H

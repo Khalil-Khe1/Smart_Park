@@ -29,8 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->le_CIN->setValidator(new QIntValidator(0 , 9999999, this));
     ui->tab_client->setModel(C.afficher());
     ui->le_Age->setValidator(new QIntValidator(0 , 99, this));
-    ui->ln_modifier_id->setValidator(new QIntValidator(0 , 9999999, this));
-    ui->ln_modifier_Age->setValidator(new QIntValidator(0 , 99, this));
+
 #define NOM_RX "^([a-z]+[,.]?[ ]?|[a-z]+['-]?)+$"
        QRegExp rxNom(NOM_RX);
        QRegExpValidator*valiNom= new QRegExpValidator(rxNom,this);
@@ -43,15 +42,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->le_NOM->setValidator(valiNom);
     ui->le_Prenom->setValidator(valiNom);
     ui->le_Adresse_mail->setValidator(valiadd);
-    ui->ln_modifier_nom->setValidator(valiNom);
-    ui->ln_modifier_prenom->setValidator(valiNom);
-    ui->ln_modifier_Adresse_mail->setValidator(valiadd);
     ui->ln_envoyermail_to->setValidator(valiadd);
     ui->ln_rechercher_id->setValidator(new QIntValidator(0 , 9999999, this));
     ui->ln_recherche_nom->setValidator(valiNom);
     ui->ln_chercher_prenom->setValidator(valiNom);
     //connect(ui->, SIGNAL(clicked()),this, SLOT(sendMail()));
-
+    int ret=A.connect_arduino(); // lancer la connexion à arduino
+        switch(ret){
+        case(0):qDebug()<< "arduino is available and connected to : "<< A.getarduino_port_name();
+            break;
+        case(1):qDebug() << "arduino is available but not connected to :" <<A.getarduino_port_name();
+           break;
+        case(-1):qDebug() << "arduino is not available";
+        }
+         QObject::connect(A.getserial(),SIGNAL(readyRead()),this,SLOT(update_label())); // permet de lancer
+         //le slot update_label suite à la reception du signal readyRead (reception des données).
 
 }
 void MainWindow::sendMail()
@@ -131,11 +136,11 @@ void MainWindow::on_pb_supp_clicked()
 void MainWindow::on_pb_modifier_clicked()
 {
 
-    int id=ui->ln_modifier_id->text().toInt();
-    QString n=ui->ln_modifier_nom->text();
-    QString p=ui->ln_modifier_prenom->text();
-    QString A=ui->ln_modifier_Adresse_mail->text();
-    int a=ui->ln_modifier_Age->text().toInt();
+    int id=ui->le_CIN->text().toInt();
+    QString n=ui->le_NOM->text();
+    QString p=ui->le_Prenom->text();
+    QString A=ui->le_Adresse_mail->text();
+    int a=ui->le_Age->text().toInt();
 
     Client C(id,n,p,A,a);
     bool test=C.modifier();
@@ -483,6 +488,27 @@ void MainWindow::on_pb_supp2_clicked()
             msgBox.setText(("echec de suppresion"));
 
             msgBox.exec();
+}
+void MainWindow::update_label()
+{
+    data=A.read_from_arduino();
+    if(data=="4"){
+   ui->update_label->setText(" Authorized access ");
+   qDebug()<< "arduino is available and connected 1 :";
+}
+    else if(data=="2"){
+        ui->update_label->setText(" Access denied ");
+        qDebug()<< "arduino is available and connected 2 :";
+
+     }
+}
+
+
+
+
+void MainWindow::on_on_clicked()
+{
+    A.write_to_arduino("1");
 }
 
 
